@@ -6,13 +6,16 @@ import Header from "../components/Header";
 import { DeleteOutline } from "@mui/icons-material";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext, useEffect, useState } from "react";
+import { useToast } from '../contexts/Toast';
 
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { getAllUser, blockUser } = useContext(AuthContext)
+  const { getAllUser, blockUser, deleteUser } = useContext(AuthContext)
   const [users, setUsers] = useState([])
+  const { error, success } = useToast();
 
+  const textNumberUsers = 'Quản lý hồ sơ người dùng: ' + users.length + ' users'
 
   useEffect(() => {
     const getUsers = async () => {
@@ -38,11 +41,35 @@ const Team = () => {
     getUsers()
   }, []);
 
-  const clickStatus = async (id)=>{
-    const res = await blockUser(id)
-    if(res.success){
-      
+  const clickStatus = async (id) => {
+    const confirm = window.confirm("Are you sure you want to change state of this user?");
+    if (confirm) {
+      const res = await blockUser(id)
+      if (res.success) {
+        users.map((u, i) => {
+          if (u.id === id) {
+            if (u.status === 'ACTIVE')
+              u.status = 'BLOCKED'
+            else u.status = 'ACTIVE'
+          }
+        })
+        success('Updated state successfully!')
+      }
+      else error(res.message)
     }
+
+  }
+
+  const clickdelete = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this account?");
+    if (confirm) {
+      const res = await deleteUser(id)
+      if (res.success) {
+        success('Deleted account successfully!')
+      }
+      else error(res.message)
+    }
+
   }
 
   const columns = [
@@ -78,7 +105,7 @@ const Team = () => {
       field: "status",
       headerName: "Trạng thái",
       flex: 1,
-      renderCell: ({ row: { status } }) => {
+      renderCell: ({ row: { status,id } }) => {
         return (
           <Box
             width="60%"
@@ -94,9 +121,10 @@ const Team = () => {
                   : colors.greenAccent[700]
             }
             borderRadius="4px"
-
+            style={{cursor:'pointer'}}
+            onClick={(e)=>clickStatus(id)}
           >
-            {status === "UNACTIVE"}
+            {status === "BLOCKED"}
             {status === "ACTIVE"}
             <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
               {status}
@@ -114,7 +142,7 @@ const Team = () => {
           <>
             <DeleteOutline
               className="userListDelete"
-            //onClick={() => handleDelete(params.row.id)}
+            onClick={(e) => clickdelete(params.row.id)}
             />
           </>
         );
@@ -124,9 +152,9 @@ const Team = () => {
 
   return (
     <Box m="20px">
-      <Header title="USER" subtitle="Quản lý hồ sơ người dùng" />
+      <Header title="USER" subtitle={textNumberUsers} />
       <Box
-        m="40px 0 0 0"
+        m="20px 0 0 0"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {

@@ -6,12 +6,14 @@ import Header from "../components/Header";
 import { DeleteOutline } from "@mui/icons-material";
 import { useState, useContext, useEffect } from "react";
 import { PostContext } from "../contexts/PostContext";
+import { useToast } from '../contexts/Toast';
+
 
 const Blog = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
-  const { postState: { posts, cats } } = useContext(PostContext)
+  const { error, success } = useToast();
+  const { postState: { posts, cats }, deletePost } = useContext(PostContext)
   const [listPosts, setsistPosts] = useState([])
 
   console.log(listPosts)
@@ -35,6 +37,18 @@ const Blog = () => {
     }
     getPosts()
   }, []);
+
+  const clickdelete = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this post?");
+    if (confirm) {
+      const res = await deletePost(id)
+      if (res.success) {
+        success('Deleted post successfully!')
+      }
+      else error(res.message)
+    }
+
+  }
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -71,7 +85,7 @@ const Blog = () => {
           <>
             <DeleteOutline
               className="blogListDelete"
-            //onClick={() => handleDelete(params.row.id)}
+            onClick={(e) => clickdelete(params.row.id)}
             />
           </>
         );

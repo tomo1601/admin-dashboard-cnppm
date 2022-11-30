@@ -16,6 +16,7 @@ import { ColorModeContext, useMode } from "./theme";
 import AuthContextProvider from "./contexts/AuthContext";
 import { AuthContext } from "./contexts/AuthContext";
 import PostContextProvider from "./contexts/PostContext";
+import {ToastProvider} from './contexts/ToastProvider'
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -27,6 +28,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <AuthContextProvider>
           <PostContextProvider>
+            <ToastProvider>
             {!isAuthenticated && (
               <Routes>
                 <Route path="/" element={<LoginAdmin />} />
@@ -56,6 +58,7 @@ function App() {
                 </div>
               </>
             )}
+            </ToastProvider>
           </PostContextProvider>
         </AuthContextProvider>
       </ThemeProvider>

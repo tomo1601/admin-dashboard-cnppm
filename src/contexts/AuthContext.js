@@ -131,7 +131,25 @@ const AuthContextProvider = ({ children }) => {
     const blockUser = async (id) => {
         const recentToken = localStorage[LOCAL_STORAGE_TOKEN_NAME];
         try {
-            const response = await axios.get(`${apiUrl}/user/block/${id}`, {
+            const response = await axios.put(`${apiUrl}/user/block`,{id:id},{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${recentToken}`,
+                },
+                
+            });
+            if (response.data.success)
+                return response.data;
+        } catch (error) {
+            if (error.response.data) return error.response.data;
+            else return { success: false, message: error.message };
+        }
+    }
+    ///delete-user/:id
+    const deleteUser = async (id) => {
+        const recentToken = localStorage[LOCAL_STORAGE_TOKEN_NAME];
+        try {
+            const response = await axios.delete(`${apiUrl}/user/delete-user/${id}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${recentToken}`,
@@ -144,8 +162,45 @@ const AuthContextProvider = ({ children }) => {
             else return { success: false, message: error.message };
         }
     }
+
+    ///delete-cate/:id
+    const deleteCate = async (id) => {
+        const recentToken = localStorage[LOCAL_STORAGE_TOKEN_NAME];
+        try {
+            const response = await axios.delete(`${apiUrl}/category/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${recentToken}`,
+                },
+            });
+            if (response.data.success)
+                return response.data;
+        } catch (error) {
+            if (error.response.data) return error.response.data;
+            else return { success: false, message: error.message };
+        }
+    }
+    //newcategory
+    const newCate = async (data) => {
+        const recentToken = localStorage[LOCAL_STORAGE_TOKEN_NAME];
+        try {
+            const response = await axios.post(`${apiUrl}/category/newcategory`,data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${recentToken}`,
+                },
+            });
+            if (response.data.success)
+                return response.data;
+        } catch (error) {
+            if (error.response.data) return error.response.data;
+            else return { success: false, message: error.message };
+        }
+    }
+
     const authContextData = {
-        loginAdmin, getUserById, logout, getAllUser, blockUser,
+        loginAdmin, getUserById, logout, getAllUser, blockUser, deleteUser,
+        deleteCate, newCate, 
         authState,
 
     };

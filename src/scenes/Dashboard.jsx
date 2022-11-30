@@ -14,8 +14,47 @@ import { PostContext } from "../contexts/PostContext";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { authState: { isAuthenticated } } = useContext(AuthContext)
+  const { authState: { isAuthenticated }, getAllUser } = useContext(AuthContext)
   const { postState: { posts, cats } } = useContext(PostContext)
+  const [newUsers, setNewUsers] = useState([])
+  const [allUser, setAllUser] = useState([])
+  const [newPosts, setNewPosts] = useState([])
+
+  const rateUp = (newUsers.length/allUser.length).toFixed(2)
+  const textUp = '+' + rateUp*100 +'%'
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const res = await getAllUser();
+      if (res.success) {
+        setAllUser(res.listUser)
+        const listUsers = res.listUser
+        let listNewUsers =[]
+        listUsers.map((u,i) => {
+          const crtDate = new Date(u.createDate).getTime()
+          const currentDate = new Date().getTime()
+          if((currentDate-crtDate)/1000 < 604800){
+            listNewUsers.push(u)
+          }
+        })
+        setNewUsers(listNewUsers)
+      }
+    }
+    const getPosts = async () => {
+        let listNewPosts =[]
+        posts.map((u,i) => {
+          const crtDate = new Date(u.createDate).getTime()
+          const currentDate = new Date().getTime()
+          if((currentDate-crtDate)/1000 < 2592000){
+            listNewPosts.push(u)
+          }
+        })
+        setNewPosts(listNewPosts)
+      }
+
+    getUsers()
+    getPosts()
+  }, []);
 
   return (
     <Box m="20px">
@@ -76,10 +115,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="Người dùng mới"
-            progress="0.30"
-            increase="+5%"
+            title={newUsers.length}
+            subtitle="Người dùng mới trong 7 ngày"
+            progress={rateUp}
+            increase={textUp}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -106,14 +145,14 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Số lượng bài viết đã tạo
+                Số lượng bài viết mới trong 7 ngày gần nhất
               </Typography>
               <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                100
+                {newPosts.length}
               </Typography>
             </Box>
             <Box>
@@ -125,7 +164,7 @@ const Dashboard = () => {
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <BarChart isDashboard={true} posts={posts}/>
+            <BarChart isDashboard={true} posts={newPosts} cats={cats}/>
           </Box>
         </Box>
         {/* bar chart*/}
@@ -150,8 +189,6 @@ const Dashboard = () => {
           {posts.map((p, i) => {
             const date = new Date(p.createDate)
             const catename = cats.find(e => e._id === p.categoryId)
-            console.log(cats)
-            console.log(p)
             return (
               <Box
                 key={`${p.txId}-${i}`}
