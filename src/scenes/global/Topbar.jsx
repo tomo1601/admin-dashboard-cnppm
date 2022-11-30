@@ -4,15 +4,26 @@ import { ColorModeContext, tokens } from "../../theme";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import { AuthContext } from "../../contexts/AuthContext";
+import {Redirect} from 'react-router-dom'
 
 const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+  const {logout} = useContext(AuthContext)
+
+  const logoutAdmin = () =>{
+    const confirm = window.confirm("Are you sure you want to logout?");
+    if (confirm) {
+      logout()
+      window.location.reload();
+    }
+  }
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -42,6 +53,9 @@ const Topbar = () => {
         </IconButton>
         <IconButton>
           <PersonOutlinedIcon />
+        </IconButton>
+        <IconButton onClick={logoutAdmin}>
+          <LogoutIcon />
         </IconButton>
       </Box>
     </Box>

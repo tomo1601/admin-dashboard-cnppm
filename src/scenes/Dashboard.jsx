@@ -1,20 +1,21 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import { mockHistory } from "../../data/mockData";
+import { tokens } from "../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import BarChart from "../../components/BarChart";
-import StatBox from "../../components/StatBox";
-import ProgressCircle from "../../components/ProgressCircle";
+import Header from "../components/Header";
+import BarChart from "../components/BarChart";
+import StatBox from "../components/StatBox";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import { PostContext } from "../contexts/PostContext";
+
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { authState: { isAuthenticated } } = useContext(AuthContext)
+  const { postState: { posts, cats } } = useContext(PostContext)
 
   return (
     <Box m="20px">
@@ -31,6 +32,7 @@ const Dashboard = () => {
               fontWeight: "bold",
               padding: "10px 20px",
             }}
+            disabled={!isAuthenticated}
           >
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
             Tải xuống báo cáo
@@ -46,7 +48,7 @@ const Dashboard = () => {
         gap="20px"
       >
         {/* ROW 1 */}
-        <Box
+        {/* <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}
           display="flex"
@@ -64,9 +66,10 @@ const Dashboard = () => {
               />
             }
           />
-        </Box>
+        </Box> */}
+        {/* new user*/}
         <Box
-          gridColumn="span 3"
+          gridColumn="span 6"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -114,7 +117,7 @@ const Dashboard = () => {
               </Typography>
             </Box>
             <Box>
-              <IconButton>
+              <IconButton disabled={!isAuthenticated}>
                 <DownloadOutlinedIcon
                   sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
                 />
@@ -122,9 +125,10 @@ const Dashboard = () => {
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <BarChart isDashboard={true} />
+            <BarChart isDashboard={true} posts={posts}/>
           </Box>
         </Box>
+        {/* bar chart*/}
         <Box
           gridColumn="span 4"
           gridRow="span 2"
@@ -143,31 +147,37 @@ const Dashboard = () => {
               Bài viết mới tạo
             </Typography>
           </Box>
-          {mockHistory.map((history, i) => (
-            <Box
-              key={`${history.txId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                >
-                  {history.username}
-                </Typography>
+          {posts.map((p, i) => {
+            const date = new Date(p.createDate)
+            const catename = cats.find(e => e._id === p.categoryId)
+            console.log(cats)
+            console.log(p)
+            return (
+              <Box
+                key={`${p.txId}-${i}`}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                borderBottom={`4px solid ${colors.primary[500]}`}
+                p="15px"
+              >
+                <Box>
+                  <Typography
+                    color={colors.greenAccent[500]}
+                  >
+                    {p.userId.fullname}
+                  </Typography>
                 </Box>
                 <Box>
-                <Typography color={colors.grey[100]}>
-                  {history.title}
-                </Typography>
+                  <Typography color={colors.grey[100]}>
+                    {p.title}
+                  </Typography>
+                </Box>
+                <Box color={colors.grey[100]}>{date.toLocaleDateString("en-US")}</Box>
+                <Box color={colors.blueAccent[500]}>{catename.name}</Box>
               </Box>
-              <Box color={colors.grey[100]}>{history.dateCreated}</Box>
-              <Box color={colors.blueAccent[500]}>{history.category}</Box>
-            </Box>
-          ))}
+            )
+          })}
         </Box>
       </Box>
     </Box>

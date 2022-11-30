@@ -1,69 +1,59 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
-import Header from "../../components/Header";
+import { tokens } from "../theme";
+import { mockCategory } from "../data/mockData";
+import Header from "../components/Header";
 import { DeleteOutline } from "@mui/icons-material";
+import { PostContext } from "../contexts/PostContext";
+import { useState, useContext, useEffect } from "react";
 
-const Team = () => {
+const Category = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const { postState: { cats } } = useContext(PostContext)
+  const [listCats, setListCats] = useState([])
+
+  console.log(listCats)
+
+  useEffect(() => {
+    const getPosts = () => {
+      let list = cats
+      let list2 = []
+      list.map((p, i) => {
+        const date = new Date(p.createDate)
+        list2.push({
+          id: p._id,
+          name: p.name,
+          description: p.description,
+          createDate: date.toLocaleDateString("en-US"),
+        })
+      })
+      setListCats(list2)
+    }
+    getPosts()
+  }, []);
+
   const columns = [
-    {field: "id",
-    headerName: "ID"},
+    {field: "id", headerName: "ID"},
     {
       field: "name",
-      headerName: "Tên người dùng",
+      headerName: "Tên danh mục",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "dateCreated",
-      headerName: "Ngày tạo tài khoản",
+        field: "description",
+        headerName: "Mô tả",
+        flex: 1,
+      },
+    {
+      field: "createDate",
+      headerName: "Ngày tạo",
       type: "date",
       headerAlign: "left",
       align: "left",
       flex: 1,
-    },
-    {
-      field: "username",
-      headerName: "Tên tài khoản",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "status",
-      headerName: "Trạng thái",
-      flex: 1,
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              status === "active"
-                ? colors.greenAccent[700]
-                : status === "unactive"
-                ? colors.redAccent[700]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {status === "UNACTIVE"}
-            {status === "ACTIVE"}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {status}
-            </Typography>
-          </Box>
-        );
-      },
     },
     {
       field: "action",
@@ -73,7 +63,7 @@ const Team = () => {
         return (
           <>
             <DeleteOutline
-              className="userListDelete"
+              className="catListDelete"
               //onClick={() => handleDelete(params.row.id)}
             />
           </>
@@ -84,7 +74,7 @@ const Team = () => {
 
   return (
     <Box m="20px">
-      <Header title="USER" subtitle="Quản lý hồ sơ người dùng" />
+      <Header title="DANH SÁCH CHUYÊN MỤC" subtitle="Quản lý chuyên mục" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -114,10 +104,10 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={listCats} columns={columns} />
       </Box>
     </Box>
   );
 };
 
-export default Team;
+export default Category;
