@@ -116,7 +116,7 @@ const Team = () => {
             backgroundColor={
               status === "active"
                 ? colors.greenAccent[700]
-                : status === "unactive"
+                : status === "BLOCKED"
                   ? colors.redAccent[700]
                   : colors.greenAccent[700]
             }

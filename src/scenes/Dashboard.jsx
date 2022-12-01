@@ -62,7 +62,7 @@ const Dashboard = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Chào mừng đến với bảng điều khiển" />
 
-        <Box>
+        {/* <Box>
           <Button
             sx={{
               backgroundColor: colors.blueAccent[700],
@@ -76,7 +76,7 @@ const Dashboard = () => {
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
             Tải xuống báo cáo
           </Button>
-        </Box>
+        </Box> */}
       </Box>
 
       {/* GRID & CHARTS */}
@@ -155,13 +155,13 @@ const Dashboard = () => {
                 {newPosts.length}
               </Typography>
             </Box>
-            <Box>
+            {/* <Box>
               <IconButton disabled={!isAuthenticated}>
                 <DownloadOutlinedIcon
                   sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
                 />
               </IconButton>
-            </Box>
+            </Box> */}
           </Box>
           <Box height="250px" m="-20px 0 0 0">
             <BarChart isDashboard={true} posts={newPosts} cats={cats}/>

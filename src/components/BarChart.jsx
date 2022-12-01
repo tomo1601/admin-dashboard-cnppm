@@ -9,16 +9,16 @@ const BarChart = ({ isDashboard = false, posts, cats }) => {
   const colors = tokens(theme.palette.mode);
   const [postsData, setPostData] = useState([])
   const [catsData, setCatsData] = useState([])
-  
+  console.log(postsData)
 
   useEffect(() => {
     const cmpDates = (d1, d2) => {
       const date1 = new Date(d1);
       const month1 = date1.getMonth() + 1
-      const day1 = date1.getDate();
+      const day1 = date1.getDay();
       const date2 = new Date(d2);
       const month2 = date2.getMonth() + 1
-      const day2 = date2.getDate();
+      const day2 = date2.getDay();
       if (day1 === day2 && month1 === month2) return true
       else return false
     }
@@ -26,18 +26,17 @@ const BarChart = ({ isDashboard = false, posts, cats }) => {
       const date = new Date(d);
       const month = date.getMonth() + 1
       const day = date.getDate();
-      const year = date.getFullYear();
       return (day + "/" + month)
     }
     const getPInDay = (d) => {
       let newP = posts
       let listP = []
       for (let i = 0; i < posts.length; i++) {
-        let ps = newP.find(p => cmpDates(p.createDate, d))
-        if (ps !== undefined) {
+        const ps = newP.find(p => cmpDates(p.createDate, d))
+        /* if (ps) {
           listP.push(ps)
           newP.splice(i, 1)
-        }
+        } */
       }
       return listP
     }
@@ -109,7 +108,6 @@ const BarChart = ({ isDashboard = false, posts, cats }) => {
       for (let i = 0; i < 7; i++) {
         const pD = pDates(date)
         const ps = getPInDay(date)
-        console.log(ps)
         if (ps.length !== 0) {
           const kq =getPostInCats(ps)
           console.log(kq)
@@ -149,7 +147,7 @@ const BarChart = ({ isDashboard = false, posts, cats }) => {
 
   return (
     <ResponsiveBar
-      data={postsData}
+      data={data}
       theme={{
         // added
         axis: {

@@ -16,8 +16,6 @@ const Blog = () => {
   const { postState: { posts, cats }, deletePost } = useContext(PostContext)
   const [listPosts, setsistPosts] = useState([])
 
-  console.log(listPosts)
-
   useEffect(() => {
     const getPosts = () => {
       let list = posts

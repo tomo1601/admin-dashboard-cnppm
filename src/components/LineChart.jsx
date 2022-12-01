@@ -2,10 +2,49 @@ import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { mockLineData as data } from "../data/mockData";
+import { useState, useEffect } from "react";
 
-const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
+const LineChart = ({ isCustomLineColors = false, isDashboard = false, posts, cats }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [lineChartData, setLineChartData] = useState([])
+
+  useEffect(() => {
+    const pDates = (d) => {
+      const date = new Date(d);
+      const month = date.getMonth() + 1
+      const day = date.getDate();
+      return (day + "/" + month)
+    }
+    const cmpDates = (d1, d2) => {
+      const date1 = new Date(d1);
+      const month1 = date1.getMonth() + 1
+      const day1 = date1.getDay();
+      const date2 = new Date(d2);
+      const month2 = date2.getMonth() + 1
+      const day2 = date2.getDay();
+      if (day1 === day2 && month1 === month2) return true
+      else return false
+    }
+    const pByDayOfCat =(c,d) =>{
+      const date=pDates(d)
+      const day = new Date(d);
+      let num=0
+      posts.map((p,i)=>{
+        console.log(p)
+        if(cmpDates(d,p.createDate)&&c.id===p.categoryId){
+          console.log(true)
+        }
+      })
+    }
+    const dataInCate = () =>{
+
+    }
+
+    const getLineChartData =()=>{
+      
+    }
+  }, []);
 
   return (
     <ResponsiveLine
@@ -62,7 +101,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
+        legend: isDashboard ? undefined : "Day to day", // added
         legendOffset: 36,
         legendPosition: "middle",
       }}
